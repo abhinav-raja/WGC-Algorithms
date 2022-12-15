@@ -2,12 +2,16 @@ const express = require('express');
 
 const Trie = require('./trie.js');
 const trieData = require('./trie.json');
+const AnagramTable = require('./anagramTable.js');
+const anagramTableData = require('./anagramTable.json');
 
 const trie = new Trie({
     fwTerminator: "$",
     bwTerminator: "#",
     root: trieData
 })
+
+const anagramTable = new AnagramTable(anagramTableData);
 
 const app = express();
 
@@ -28,9 +32,18 @@ app.get('/getCharades', (req, res)=>{
         res.send(charades);
 
     } catch (err) {
-        res.sendStatus(400).send(err.message);
+        res.send(err.message);
     }
 })
+
+app.get('/getAnagrams', (req, res)=>{
+    try {
+        const {word} = req.query;
+        res.send(anagramTable.findAllAnagrams(word));
+    } catch (err) {
+        res.send(err.message);
+    }
+});
 
 app.listen(3000, ()=>{
     console.log('Server up on port 3000!');
